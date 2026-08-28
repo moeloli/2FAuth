@@ -67,6 +67,37 @@ class SettingService
     }
 
     /**
+     * Get settings required by the front end when a anonymous visits 2FAuth
+     *
+     * @return array<string, string> the public Settings collection
+     */
+    public function forVisitor() : array
+    {
+        return [
+            'disableRegistration' => $this->settings->get('disableRegistration'),
+            'enableSso'           => $this->settings->get('enableSso'),
+            'useSsoOnly'          => $this->settings->get('useSsoOnly'),
+        ];
+    }
+
+    /**
+     * Get settings required by the front end when a regular user is authenticated
+     *
+     * @return array<string, string> the Settings collection
+     */
+    public function forRegularUser() : array
+    {
+        return array_merge(
+            $this->forVisitor(),
+            [
+                'enableSharing'              => $this->settings->get('enableSharing'),
+                'enableAllUsersSharingScope' => $this->settings->get('enableAllUsersSharingScope'),
+                'allowPatWhileSsoOnly'       => $this->settings->get('allowPatWhileSsoOnly'),
+            ]
+        );
+    }
+
+    /**
      * Set a setting
      *
      * @param  string  $setting  A single setting name

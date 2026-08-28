@@ -19,11 +19,8 @@ trait HasAuthenticatedPayload
             'email'          => $user->email,
             'oauth_provider' => $user->oauth_provider,
             'preferences'    => $user->preferences,
-            'appSettings'    => [
-                'enableSharing'              => Settings::get('enableSharing'),
-                'enableAllUsersSharingScope' => Settings::get('enableAllUsersSharingScope'),
-            ],
-            'is_admin' => $user->isAdministrator(),
+            'appSettings'    => Settings::forRegularUser(),
+            'is_admin'       => $user->isAdministrator(),
         ];
     }
 }

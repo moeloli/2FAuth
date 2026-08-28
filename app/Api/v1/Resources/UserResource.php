@@ -33,10 +33,7 @@ class UserResource extends JsonResource
             'oauth_provider'         => $this->oauth_provider,
             'authenticated_by_proxy' => Auth::getDefaultDriver() === 'reverse-proxy-guard',
             'preferences'            => $this->preferences,
-            'appSettings'            => [
-                'enableSharing'              => Settings::get('enableSharing'),
-                'enableAllUsersSharingScope' => Settings::get('enableAllUsersSharingScope'),
-            ],
+            'appSettings'            => Settings::forRegularUser(),
             'is_admin' => $this->is_admin,
         ];
     }

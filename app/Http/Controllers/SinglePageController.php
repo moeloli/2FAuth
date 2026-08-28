@@ -25,16 +25,12 @@ class SinglePageController extends Controller
         }
 
         // We only share necessary and acceptable values with the HTML front-end.
-        // But all the properties have to be pushed to init the appSetting store state correctly,
-        // so we set them to null, they will be fed later by the front-end
-        $publicSettings = $appSettings->only([
-            'disableRegistration',
-            'enableSso',
-            'useSsoOnly',
-        ]);
+        // But all the property keys have to be pushed to init the appSetting store state correctly,
+        // so we set most of them to null. They will be fed later, all of them for admins or partially (using
+        // authenticatedPayload trait or UserResource class) for regular users.        
         $settings = $appSettings->map(function (mixed $item, string $key) {
             return null;
-        })->merge($publicSettings)->toJson();
+        })->merge(Settings::forVisitor())->toJson();
 
         $proxyAuth          = config('auth.defaults.guard') === 'reverse-proxy-guard' ? true : false;
         $proxyLogoutUrl     = config('2fauth.config.proxyLogoutUrl') ? config('2fauth.config.proxyLogoutUrl') : false;
