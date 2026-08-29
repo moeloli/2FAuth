@@ -27,7 +27,7 @@ class SinglePageController extends Controller
         // We only share necessary and acceptable values with the HTML front-end.
         // But all the property keys have to be pushed to init the appSetting store state correctly,
         // so we set most of them to null. They will be fed later, all of them for admins or partially (using
-        // authenticatedPayload trait or UserResource class) for regular users.        
+        // authenticatedPayload trait or UserResource class) for regular users.
         $settings = $appSettings->map(function (mixed $item, string $key) {
             return null;
         })->merge(Settings::forVisitor())->toJson();
