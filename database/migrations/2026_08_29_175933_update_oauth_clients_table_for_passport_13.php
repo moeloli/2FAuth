@@ -29,16 +29,19 @@ return new class extends Migration
                     ? config('auth.providers.'.($client->provider ?: config('auth.guards.api-guard.provider')).'.model')
                     : null,
                 'redirect_uris' => $client->redirect_uris,
-                'grant_types' => $client->grant_types,
+                'grant_types' => ['personal_access', 'refresh_token'],
             ])->save());
         }
 
         Schema::table('oauth_clients', function (Blueprint $table) {
+            $table->dropIndex('oauth_clients_user_id_index');
             $table->dropColumn(['user_id', 'redirect', 'personal_access_client', 'password_client']);
 
             $table->text('redirect_uris')->nullable(false)->change();
             $table->text('grant_types')->nullable(false)->change();
         });
+
+        Schema::dropIfExists('oauth_personal_access_clients');
     }
 
     /**
@@ -70,5 +73,13 @@ return new class extends Migration
             $table->dropMorphs('owner');
             $table->dropColumn(['redirect_uris', 'grant_types']);
         });
+
+        if (! Schema::hasTable('oauth_personal_access_clients')) {
+            Schema::create('oauth_personal_access_clients', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('client_id');
+                $table->timestamps();
+            });
+        }
     }
 };
