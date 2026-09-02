@@ -36,7 +36,8 @@ class LogNotificationListener
         }
         else if ($event instanceof NotificationFailed)
         {
-            Log::notice(sprintf('Notification sending to user ID #%s via channel %s failed (%s)', $event->notifiable->id, $event->channel, get_class($event->notification)));
+            Log::warning(sprintf('Notification sending to user ID #%s via channel %s failed (%s)', $event->notifiable->id, $event->channel, get_class($event->notification)));
+            Log::warning('Review your MAIL_* environment variables, especially if you are using SMTP, and test sending emails from the admin panel of the 2FAuth web app.');
         }
     }
 }
