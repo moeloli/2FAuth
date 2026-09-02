@@ -79,14 +79,14 @@ class PersonalAccessTokenControllerTest extends FeatureTestCase
     #[Test]
     public function test_forUser_ensures_personal_access_client_exists()
     {
-        DB::table('oauth_clients')->where('personal_access_client', true)->delete();
+        DB::table('oauth_clients')->where('grant_types', 'like', '%personal_access%')->delete();
 
         $this->actingAs($this->user, 'web-guard')
             ->json('GET', '/oauth/personal-access-tokens')
             ->assertOk();
 
         $this->assertDatabaseHas('oauth_clients', [
-            'personal_access_client' => true,
+            'grant_types' => '["personal_access"]',
             'provider' => $this->user->getProviderName(),
         ]);
     }
@@ -137,7 +137,7 @@ class PersonalAccessTokenControllerTest extends FeatureTestCase
     #[Test]
     public function test_store_ensures_personal_access_client_exists()
     {
-        DB::table('oauth_clients')->where('personal_access_client', true)->delete();
+        DB::table('oauth_clients')->where('grant_types', 'like', '%personal_access%')->delete();
 
         $this->actingAs($this->user, 'web-guard')
             ->json('POST', '/oauth/personal-access-tokens', [
@@ -146,7 +146,7 @@ class PersonalAccessTokenControllerTest extends FeatureTestCase
             ->assertOk();
 
         $this->assertDatabaseHas('oauth_clients', [
-            'personal_access_client' => true,
+            'grant_types' => '["personal_access"]',
             'provider' => $this->user->getProviderName(),
         ]);
     }
