@@ -31,8 +31,7 @@ class SendTwoFAccountOwnershipTransferredNotification
                     (new TwoFAccountOwnershipTransferredNotification($event->twofaccount, $event->previousOwner))
                         ->locale($this->userLocale($event->twofaccount->user))
                 );
-            }
-            catch(\Throwable) {
+            } catch (\Throwable) {
                 // Nothing to do here, LogNotificationListener will log error details
             }
         }

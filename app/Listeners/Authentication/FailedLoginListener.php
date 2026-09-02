@@ -65,8 +65,7 @@ class FailedLoginListener extends AbstractAccessListener
             if ($user->preferences['notifyOnFailedLogin'] == true) {
                 try {
                     $user->notify((new FailedLoginNotification($log))->locale($this->userLocale($user)));
-                }
-                catch(\Throwable) {
+                } catch (\Throwable) {
                     // Nothing to do here, LogNotificationListener will log error details
                 }
             }

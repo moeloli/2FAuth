@@ -72,8 +72,7 @@ class LoginListener extends AbstractAccessListener
         if (! $known && ! $newUser && $user->preferences['notifyOnNewAuthDevice'] == true) {
             try {
                 $user->notify((new SignedInWithNewDeviceNotification($log))->locale($this->userLocale($user)));
-            }
-            catch(\Throwable) {
+            } catch (\Throwable) {
                 // Nothing to do here, LogNotificationListener will log error details
             }
         }

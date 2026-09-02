@@ -53,8 +53,7 @@ class VisitedByProxyUserListener extends AbstractAccessListener
         if (! $known && ! $newUser && Str::endsWith($user->email, RemoteUserProvider::FAKE_REMOTE_DOMAIN) && $user->preferences['notifyOnNewAuthDevice']) {
             try {
                 $user->notify((new SignedInWithNewDeviceNotification($log))->locale($this->userLocale($user)));
-            }
-            catch(\Throwable) {
+            } catch (\Throwable) {
                 // Nothing to do here, LogNotificationListener will log error details
             }
         }

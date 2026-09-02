@@ -33,8 +33,7 @@ class SendTwoFAccountSharedNotification
                         (new TwoFAccountSharedNotification($event->twofaccount, $event->actor->name, $event->isScopeAllUsers()))
                             ->locale($this->userLocale($recipient))
                     );
-                }
-                catch(\Throwable) {
+                } catch (\Throwable) {
                     // Nothing to do here, LogNotificationListener will log error details
                 }
             }
