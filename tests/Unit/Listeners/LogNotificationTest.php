@@ -52,7 +52,7 @@ class LogNotificationTest extends TestCase
         $event    = new NotificationFailed((new User), (new TestEmailSettingNotification), 'channel');
         $listener = new LogNotificationListener;
 
-        Log::shouldReceive('notice')->once();
+        Log::shouldReceive('warning')->times(2);
 
         $listener->handle($event);
     }
