@@ -149,7 +149,7 @@ class Install extends Command
             $this->callSilently('migrate');
 
             if (DB::table('oauth_clients')
-                ->where('personal_access_client', true)
+                ->where('grant_types', 'like', '%personal_access%')
                 ->where('name', config('app.name'))
                 ->where('provider', config('auth.guards.api-guard.provider', 'users'))
                 ->doesntExist()
