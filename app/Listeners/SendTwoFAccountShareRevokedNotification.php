@@ -28,10 +28,15 @@ class SendTwoFAccountShareRevokedNotification
     {
         $event->recipients->each(function (User $recipient) use ($event) {
             if ($recipient->preferences['notifyOnShare'] == true) {
-                $recipient->notify(
-                    (new TwoFAccountShareRevokedNotification($event->twofaccount, $event->actor->name, $event->isScopeAllUsers()))
-                        ->locale($this->userLocale($recipient))
-                );
+                try {
+                    $recipient->notify(
+                        (new TwoFAccountShareRevokedNotification($event->twofaccount, $event->actor->name, $event->isScopeAllUsers()))
+                            ->locale($this->userLocale($recipient))
+                    );
+                }
+                catch(\Throwable) {
+                    // Nothing to do here, LogNotificationListener will log error details
+                }
             }
         });
     }

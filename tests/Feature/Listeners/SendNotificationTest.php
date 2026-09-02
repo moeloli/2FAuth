@@ -68,6 +68,27 @@ class SendNotificationTest extends FeatureTestCase
     }
 
     #[Test]
+    public function test_transferOwnership_notification_fails_silently()
+    {
+        config(['mail.default' => 'smtp']);
+        config(['mail.mailers.smtp.port' => 'invalidPortNumberToTriggerSmtpTransportError']);
+
+        $previousOwner = User::factory()->create();
+        $twofaccount = TwoFAccount::factory()->for($previousOwner)->create([
+            'service' => 'Github',
+            'account' => 'alice@example.org',
+        ]);
+
+        $newOwner = User::factory()->create();
+        $newOwner['preferences->notifyOnOwnershipTransfer'] = true;
+        $newOwner->save();
+
+        TwoFAccounts::transferOwnership($twofaccount, $newOwner);
+
+        config(['mail.default' => 'array']);
+    }
+
+    #[Test]
     public function test_shared_notification_is_sent_to_user()
     {
         Notification::fake();
@@ -162,6 +183,28 @@ class SendNotificationTest extends FeatureTestCase
     }
 
     #[Test]
+    public function test_shared_notification_fails_silently()
+    {
+        config(['mail.default' => 'smtp']);
+        config(['mail.mailers.smtp.port' => 'invalidPortNumberToTriggerSmtpTransportError']);
+
+        $owner = User::factory()->create();
+        $twofaccount = TwoFAccount::factory()->for($owner)->create([
+            'service' => 'Github',
+            'account' => 'alice@example.org',
+        ]);
+
+        $targetUser = User::factory()->create();
+        $targetUser['preferences->notifyOnShare'] = true;
+        $targetUser->save();
+
+        $service = new TwoFAccountShareService();
+        $service->shareWithUsers($twofaccount, $owner, collect([$targetUser]));
+
+        config(['mail.default' => 'array']);
+    }
+
+    #[Test]
     public function test_share_revoked_notification_is_sent_to_user()
     {
         Notification::fake();
@@ -224,7 +267,7 @@ class SendNotificationTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_revoke_shared_notification_is_not_sent_to_user()
+    public function test_share_revoked_notification_is_not_sent_to_user()
     {
         Notification::fake();
 
@@ -270,5 +313,32 @@ class SendNotificationTest extends FeatureTestCase
 
         Notification::assertNothingSentTo($targetUser);
         Notification::assertNothingSentTo($anotherUser);
+    }
+
+    #[Test]
+    public function test_share_revoked_notification_fails_silently()
+    {
+        config(['mail.default' => 'smtp']);
+        config(['mail.mailers.smtp.port' => 'invalidPortNumberToTriggerSmtpTransportError']);
+
+        $owner = User::factory()->create();
+        $twofaccount = TwoFAccount::factory()->for($owner)->create([
+            'service' => 'Github',
+            'account' => 'alice@example.org',
+        ]);
+
+        $targetUser = User::factory()->create();
+        $targetUser['preferences->notifyOnShare'] = false;
+        $targetUser->save();
+
+        $service = new TwoFAccountShareService();
+        $service->shareWithUser($twofaccount, $owner, $targetUser);
+
+        $targetUser['preferences->notifyOnShare'] = true;
+        $targetUser->save();
+
+        $result = $service->revokeUserShare($twofaccount, $targetUser);
+
+        config(['mail.default' => 'array']);
     }
 }

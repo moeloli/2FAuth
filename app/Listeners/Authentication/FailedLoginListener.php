@@ -63,7 +63,12 @@ class FailedLoginListener extends AbstractAccessListener
             ]);
 
             if ($user->preferences['notifyOnFailedLogin'] == true) {
-                $user->notify((new FailedLoginNotification($log))->locale($this->userLocale($user)));
+                try {
+                    $user->notify((new FailedLoginNotification($log))->locale($this->userLocale($user)));
+                }
+                catch(\Throwable) {
+                    // Nothing to do here, LogNotificationListener will log error details
+                }
             }
         } else {
             Log::info(sprintf('%s received an event with a null $user member. Nothing has been written to the auth log', self::class));

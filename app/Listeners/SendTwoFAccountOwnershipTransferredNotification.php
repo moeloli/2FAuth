@@ -26,10 +26,15 @@ class SendTwoFAccountOwnershipTransferredNotification
     public function handle(TwoFAccountOwnershipTransferred $event) : void
     {
         if ($event->twofaccount->user->preferences['notifyOnOwnershipTransfer'] == true) {
-            $event->twofaccount->user->notify(
-                (new TwoFAccountOwnershipTransferredNotification($event->twofaccount, $event->previousOwner))
-                    ->locale($this->userLocale($event->twofaccount->user))
-            );
+            try {
+                $event->twofaccount->user->notify(
+                    (new TwoFAccountOwnershipTransferredNotification($event->twofaccount, $event->previousOwner))
+                        ->locale($this->userLocale($event->twofaccount->user))
+                );
+            }
+            catch(\Throwable) {
+                // Nothing to do here, LogNotificationListener will log error details
+            }
         }
     }
 }
