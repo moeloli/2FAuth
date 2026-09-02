@@ -5,6 +5,7 @@
 ### Fixed
 
 - [issue #563](https://github.com/Bubka/2FAuth/issues/563) API tokens does not works on OpenID accounts
+- [issue #565](https://github.com/Bubka/2FAuth/issues/565) Trailing slash "/" needed for extension to work
 - [issue #569](https://github.com/Bubka/2FAuth/issues/569) Server error page shown after sharing with no email configured
 
 ## [8.0.1] - 2026-07-05
